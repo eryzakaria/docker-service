@@ -27,7 +27,7 @@ jobs:
       - name: Deploy with Docker Compose
         run: |
           ssh $SSH_USER@$SSH_HOST << EOF
-            cd /path/to/project
+            cd /home/ubuntu
             git pull origin main
             docker compose down
             docker compose pull
