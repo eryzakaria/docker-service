@@ -29,9 +29,9 @@ jobs:
           ssh $SSH_USER@$SSH_HOST << EOF
             cd /path/to/project
             git pull origin main
-            docker-compose down
-            docker-compose pull
-            docker-compose up -d --build
+            docker compose down
+            docker compose pull
+            docker compose up -d --build
           EOF
 
         env:
