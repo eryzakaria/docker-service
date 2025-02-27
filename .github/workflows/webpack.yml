@@ -3,7 +3,7 @@ name: Deploy to Server
 on:
   push:
     branches:
-      - main  # Sesuaikan dengan branch yang ingin digunakan untuk deploy
+      - master  # Sesuaikan dengan branch yang ingin digunakan untuk deploy
 
 jobs:
   deploy:
