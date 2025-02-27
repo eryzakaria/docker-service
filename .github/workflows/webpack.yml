@@ -16,43 +16,25 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" | base64 --decode > ~/.ssh/id_rsa
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
 
-      - name: Test SSH Connection
-        run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "echo 'SSH connection successful'"
-
-        env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-
       - name: Deploy with Docker Compose
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            set -e  # Stop jika ada error
-      
-            # Path Project di Server
-            PROJECT_DIR="/home/ubuntu/testing"
-      
-            # Clone repository jika belum ada
-            if [ ! -d "$PROJECT_DIR" ]; then
-              git clone https://github.com/username/repository.git $PROJECT_DIR
-            fi
-      
-            # Masuk ke Direktori Project
-            cd $PROJECT_DIR
+          ssh $SSH_USER@$SSH_HOST << EOF
+            git clone https://github.com/eryzakaria/docker-service.git
+            cd /home/ubuntu/docker-service
             git pull origin main
-      
-            # Jalankan Docker Compose
-            docker-compose down
-            docker-compose pull
-            docker-compose up -d --build
+            docker compose down
+            docker compose pull
+            docker compose up -d --build
           EOF
+
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
