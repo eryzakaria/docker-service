@@ -3,7 +3,7 @@ name: Deploy to Server
 on:
   push:
     branches:
-      - main  # Sesuaikan dengan branch yang ingin digunakan untuk deploy
+      - master  # Sesuaikan dengan branch yang ingin digunakan untuk deploy
 
 jobs:
   deploy:
@@ -32,29 +32,29 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
 
-- name: Deploy with Docker Compose
-  run: |
-    ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-      set -e  # Stop jika ada error
-
-      # Ganti dengan direktori tempat project akan disimpan
-      PROJECT_DIR="/home/ubuntu/testing
-
-      # Hapus folder lama (opsional, hanya jika ingin bersih)
-      rm -rf $PROJECT_DIR
-
-      # Clone ulang repository
-      git clone https://github.com/username/repository.git $PROJECT_DIR
-
-      # Masuk ke direktori project
-      cd $PROJECT_DIR
-
-      # Jalankan Docker Compose
-      docker compose down
-      docker compose pull
-      dockercompose up -d --build
-    EOF
-
-  env:
-    SSH_HOST: ${{ secrets.SSH_HOST }}
-    SSH_USER: ${{ secrets.SSH_USER }}
+      - name: Deploy with Docker Compose
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            set -e  # Stop jika ada error
+      
+            # Ganti dengan direktori tempat project akan disimpan
+            PROJECT_DIR="/home/ubuntu/testing
+      
+            # Hapus folder lama (opsional, hanya jika ingin bersih)
+            rm -rf $PROJECT_DIR
+      
+            # Clone ulang repository
+            git clone https://github.com/username/repository.git $PROJECT_DIR
+      
+            # Masuk ke direktori project
+            cd $PROJECT_DIR
+      
+            # Jalankan Docker Compose
+            docker compose down
+            docker compose pull
+            dockercompose up -d --build
+          EOF
+      
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
